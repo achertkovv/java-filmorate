@@ -100,6 +100,7 @@ public class FilmController {
     private void validateDuration(Film film) {
         if (film.getDuration() == null) {
             log.warn("Пустая продолжительность фильма");
+            throw new ValidationException("Продолжительность фильма обязательна");
         }
         // продолжительность фильма должна быть положительным числом.
         if (film.getDuration() <= 0) {
@@ -111,6 +112,7 @@ public class FilmController {
     private void validateDescription(Film film) {
         if (film.getDescription() == null) {
             log.warn("Пустое описание фильма");
+            return;
         }
         // максимальная длина описания — 200 символов;
         if (film.getDescription().length() > 200) {
