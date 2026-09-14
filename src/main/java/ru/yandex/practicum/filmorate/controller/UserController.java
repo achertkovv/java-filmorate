@@ -59,6 +59,7 @@ public class UserController {
             validateLogin(newUser);
             validateBirthday(newUser);
             normalizeName(newUser);
+            oldUser.setName(newUser.getName());
             oldUser.setBirthday(newUser.getBirthday());
             oldUser.setEmail(newUser.getEmail());
             oldUser.setLogin(newUser.getLogin());
