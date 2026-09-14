@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
@@ -28,7 +29,7 @@ public class UserController {
 
     // Используйте аннотацию @RequestBody, чтобы создать объект из тела запроса на добавление или обновление сущности.
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         validateUserIsNull(user);
         log.info("Запрос на создание пользователя с логином: {}", user.getLogin());
         validateEmail(user);
@@ -44,7 +45,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User newUser) {
+    public User updateUser(@Valid @RequestBody User newUser) {
         validateUserIsNull(newUser);
         log.info("Запрос на обновление пользователя: id={}", newUser.getId());
         // Если при изменении данных пользователя не указан его идентификатор, то должно генерироваться
