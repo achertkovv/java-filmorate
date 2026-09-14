@@ -93,11 +93,11 @@ public class UserController {
         // логин не может быть пустым и содержать пробелы;
         if (user.getLogin() == null) {
             log.warn("Пустой логин");
-            throw new ConditionsNotMetException("Логин должен быть указан и не может быть пустым");
+            throw new ConditionsNotMetException("Логин должен быть указан");
         }
         if (user.getLogin().isBlank()) {
             log.warn("Пустой логин пользователя '{}'", user.getName());
-            throw new ConditionsNotMetException("Логин должен быть указан и не может быть пустым");
+            throw new ConditionsNotMetException("Логин не может быть пустым");
         }
         if (user.getLogin().contains(" ")) {
             log.warn("Логин пользователя '{}' содержит пробел", user.getLogin());
@@ -107,9 +107,13 @@ public class UserController {
 
     private void validateEmail(User user) {
         // электронная почта не может быть пустой и должна содержать символ @;
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
+        if (user.getEmail() == null) {
             log.warn("Пустой email");
-            throw new ConditionsNotMetException("Email не должен быть пустым");
+            throw new ConditionsNotMetException("Email должен быть указан");
+        }
+        if (user.getEmail().isBlank()) {
+            log.warn("Пустой email пользователя '{}'", user.getName());
+            throw new ConditionsNotMetException("Email не может быть пустым");
         }
         if (!user.getEmail().contains("@")) {
             log.warn("Некорректная email пользователя '{}': {}", user.getName(), user.getEmail());
