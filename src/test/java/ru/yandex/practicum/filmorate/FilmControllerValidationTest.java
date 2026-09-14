@@ -21,7 +21,9 @@ class FilmControllerValidationTest {
         controller = new FilmController();
     }
 
-    /** Валидный фильм — от него будем "портить" одно поле. */
+    /**
+     * Валидный фильм — от него будем "портить" одно поле.
+     */
     private Film validFilm() {
         Film film = new Film();
         film.setName("Матрица");
