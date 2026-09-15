@@ -18,14 +18,12 @@ class UserControllerTest {
 
     @Test
     void shouldCreateUserWhenDataIsValid() throws Exception {
-        String json = """
-                {
-                  "email": "user@example.com",
-                  "login": "user_login",
-                  "name": "Иван",
-                  "birthday": "1990-05-15"
-                }
-                """;
+        String json = "{\n" +
+                      "  \"email\": \"user@example.com\",\n" +
+                      "  \"login\": \"user_login\",\n" +
+                      "  \"name\": \"Иван\",\n" +
+                      "  \"birthday\": \"1990-05-15\"\n" +
+                      "}\n";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -37,14 +35,12 @@ class UserControllerTest {
 
     @Test
     void shouldUseLoginAsNameWhenNameIsBlank() throws Exception {
-        String json = """
-                {
-                  "email": "user@example.com",
-                  "login": "user_login",
-                  "name": "",
-                  "birthday": "1990-05-15"
-                }
-                """;
+        String json = "{\n" +
+                      "  \"email\": \"user@example.com\",\n" +
+                      "  \"login\": \"user_login\",\n" +
+                      "  \"name\": \"\",\n" +
+                      "  \"birthday\": \"1990-05-15\"\n" +
+                      "}\n";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -55,14 +51,12 @@ class UserControllerTest {
 
     @Test
     void shouldReturn400WhenEmailIsBlank() throws Exception {
-        String json = """
-                {
-                  "email": "",
-                  "login": "user_login",
-                  "name": "Иван",
-                  "birthday": "1990-05-15"
-                }
-                """;
+        String json = "{\n" +
+                      "  \"email\": \"\",\n" +
+                      "  \"login\": \"user_login\",\n" +
+                      "  \"name\": \"Иван\",\n" +
+                      "  \"birthday\": \"1990-05-15\"\n" +
+                      "}\n";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -72,14 +66,12 @@ class UserControllerTest {
 
     @Test
     void shouldReturn400WhenEmailHasNoAt() throws Exception {
-        String json = """
-                {
-                  "email": "userexample.com",
-                  "login": "user_login",
-                  "name": "Иван",
-                  "birthday": "1990-05-15"
-                }
-                """;
+        String json = "{\n" +
+                      "  \"email\": \"userexample.com\",\n" +
+                      "  \"login\": \"user_login\",\n" +
+                      "  \"name\": \"Иван\",\n" +
+                      "  \"birthday\": \"1990-05-15\"\n" +
+                      "}\n";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -89,14 +81,12 @@ class UserControllerTest {
 
     @Test
     void shouldReturn400WhenEmailIsNotValid() throws Exception {
-        String json = """
-                {
-                  "email": "userexample.com@",
-                  "login": "user_login",
-                  "name": "Иван",
-                  "birthday": "1990-05-15"
-                }
-                """;
+        String json = "{\n" +
+                      "  \"email\": \"userexample.com@\",\n" +
+                      "  \"login\": \"user_login\",\n" +
+                      "  \"name\": \"Иван\",\n" +
+                      "  \"birthday\": \"1990-05-15\"\n" +
+                      "}\n";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -106,14 +96,12 @@ class UserControllerTest {
 
     @Test
     void shouldReturn400WhenLoginContainsSpace() throws Exception {
-        String json = """
-                {
-                  "email": "user@example.com",
-                  "login": "user login",
-                  "name": "Иван",
-                  "birthday": "1990-05-15"
-                }
-                """;
+        String json = "{\n" +
+                      "  \"email\": \"user@example.com\",\n" +
+                      "  \"login\": \"user login\",\n" +
+                      "  \"name\": \"Иван\",\n" +
+                      "  \"birthday\": \"1990-05-15\"\n" +
+                      "}\n";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,14 +111,12 @@ class UserControllerTest {
 
     @Test
     void shouldReturn400WhenLoginIsBlank() throws Exception {
-        String json = """
-                {
-                  "email": "user@example.com",
-                  "login": "",
-                  "name": "Иван",
-                  "birthday": "1990-05-15"
-                }
-                """;
+        String json = "{\n" +
+                      "  \"email\": \"user@example.com\",\n" +
+                      "  \"login\": \"\",\n" +
+                      "  \"name\": \"Иван\",\n" +
+                      "  \"birthday\": \"1990-05-15\"\n" +
+                      "}\n";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -140,14 +126,12 @@ class UserControllerTest {
 
     @Test
     void shouldReturn400WhenBirthdayInFuture() throws Exception {
-        String json = """
-                {
-                  "email": "user@example.com",
-                  "login": "user_login",
-                  "name": "Иван",
-                  "birthday": "2999-01-01"
-                }
-                """;
+        String json = "{\n" +
+                      "  \"email\": \"user@example.com\",\n" +
+                      "  \"login\": \"user_login\",\n" +
+                      "  \"name\": \"Иван\",\n" +
+                      "  \"birthday\": \"2999-01-01\"\n" +
+                      "}\n";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -165,15 +149,13 @@ class UserControllerTest {
 
     @Test
     void shouldReturn404OnUpdateWhenUserNotFound() throws Exception {
-        String json = """
-                {
-                  "id": 999,
-                  "email": "user@example.com",
-                  "login": "user_login",
-                  "name": "Иван",
-                  "birthday": "1990-05-15"
-                }
-                """;
+        String json = "{\n" +
+                      "  \"id\": 999,\n" +
+                      "  \"email\": \"user@example.com\",\n" +
+                      "  \"login\": \"user_login\",\n" +
+                      "  \"name\": \"Иван\",\n" +
+                      "  \"birthday\": \"1990-05-15\"\n" +
+                      "}\n";
 
         mockMvc.perform(put("/users")
                         .contentType(MediaType.APPLICATION_JSON)
