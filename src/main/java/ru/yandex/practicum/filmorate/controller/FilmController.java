@@ -34,10 +34,7 @@ public class FilmController {
     public Film addFilm(@RequestBody Film film) {
         validateFilmIsNull(film);
         log.info("Запрос на добавление фильма: {}", film.getName());
-        // название не может быть пустым;
-        if (film.getName() == null || film.getName().isBlank()) {
-            throw new ConditionsNotMetException("Название не может быть пустым");
-        }
+        validateName(film);
         validateDescription(film);
         validateDuration(film);
         validateReleaseDate(film);
@@ -61,10 +58,7 @@ public class FilmController {
         }
         if (films.containsKey(newFilm.getId())) {
             Film oldFilm = films.get(newFilm.getId());
-            // Если название пустое - то ничего не меняем
-            if (newFilm.getName() == null) {
-                return oldFilm;
-            }
+            validateName(newFilm);
             validateDescription(newFilm);
             validateDuration(newFilm);
             validateReleaseDate(newFilm);
@@ -81,7 +75,7 @@ public class FilmController {
     private void validateFilmIsNull(Film film) {
         if (film == null) {
             log.warn("Попытка работать с фильмом null");
-            throw new ValidationException("Фильм не может быть nul");
+            throw new ValidationException("Фильм не может быть null");
         }
     }
 
@@ -118,6 +112,14 @@ public class FilmController {
         if (film.getDescription().length() > 200) {
             log.warn("Некорректная длина описания фильма '{}': {}", film.getName(), film.getDescription().length());
             throw new ValidationException("Длина описания должна содержать менее 200 символов");
+        }
+    }
+
+    private void validateName(Film film) {
+        // название не может быть пустым;
+        if (film.getName() == null || film.getName().isBlank()) {
+            log.warn("Название фильма не задано");
+            throw new ConditionsNotMetException("Название не может быть пустым");
         }
     }
 
