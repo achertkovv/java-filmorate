@@ -100,11 +100,9 @@ public class UserService {
     }
 
     private User getExistingUser(Long id) {
-        return userStorage.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));
+        return getById(id);
     }
 
-    // Логику поиска удобно держать в сервисе, там уже есть похожий приватный метод.
     public User getById(Long id) {
         return userStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));

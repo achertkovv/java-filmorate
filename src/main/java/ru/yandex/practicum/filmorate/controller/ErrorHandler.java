@@ -66,8 +66,6 @@ public class ErrorHandler {
         return errorBody(e.getMessage(), "Внутренняя ошибка сервера");
     }
 
-    // Можно лучше: Map.of не принимает null, а у многих исключений (например, NullPointerException) сообщения нет.
-    // Тогда сам обработчик 500 упадёт с новой ошибкой. Для такого случая стоит подставлять запасной текст.
     private Map<String, String> errorBody(String message, String alterText) {
         return Map.of("error", message != null ? message : alterText);
     }

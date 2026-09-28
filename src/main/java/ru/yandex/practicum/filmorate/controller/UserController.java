@@ -14,10 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    // Надо исправить: Контроллер зависит сразу от UserStorage и UserService: создание, обновление, проверка
-    // существования и подстановка логина вместо имени идут прямо через хранилище. По заданию контроллер
-    // только принимает запрос и передаёт его в сервис, а работа с хранилищем — задача сервиса.
-    // Эти операции стоит перенести в UserService и оставить в контроллере одну зависимость.
     private final UserService userService;
 
     @Autowired
@@ -30,7 +26,6 @@ public class UserController {
         return userService.getAll();
     }
 
-    // Используйте аннотацию @RequestBody, чтобы создать объект из тела запроса на добавление или обновление сущности.
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
         log.info("POST /users");
@@ -43,9 +38,6 @@ public class UserController {
         return userService.update(user);
     }
 
-    // Надо исправить: По заданию нужен эндпоинт получения пользователя по id:
-    // GET /users/{id} через @PathVariable,
-    // с ответом 404 для несуществующего id. В контроллере его нет.
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
         return userService.getById(id);

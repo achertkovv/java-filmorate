@@ -30,8 +30,6 @@ public class InMemoryUserStorage implements UserStorage {
         oldUser.setEmail(user.getEmail());
         oldUser.setLogin(user.getLogin());
         log.info("Пользователь успешно обновлён: id={}, login={}", user.getId(), user.getLogin());
-        // Можно лучше: update возвращает объект из запроса, а не сохранённый,
-        // поэтому в ответе на PUT /users список друзей всегда пустой. В InMemoryFilmStorage это сделано правильно.
         return oldUser;
     }
 

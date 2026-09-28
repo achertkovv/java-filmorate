@@ -80,11 +80,9 @@ public class FilmService {
 
     // Топ фильмов по количеству лайков
     public List<Film> getPopular(int count) {
-        // Можно лучше: При count <= 0 значение молча заменяется на 10, и клиент не узнаёт, что передал
-        // некорректный параметр. Обычно на такое отвечают 400.
         if (count <= 0) {
             log.warn("Некорректное число фильмов '{}'", count);
-            throw new ValidationException("Число фильма должна быть положительным числом");
+            throw new ValidationException("Число фильмов должно быть положительным числом");
         }
         final int limit = count;
 
@@ -94,18 +92,16 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-    private Film getExistingFilm(Long id) {
-        return filmStorage.findById(id)
-                .orElseThrow(() -> new NotFoundException("Фильм с id=" + id + " не найден"));
-    }
-
     private void ensureUserExists(Long userId) {
         if (userStorage.findById(userId).isEmpty()) {
             throw new NotFoundException("Пользователь с id=" + userId + " не найден");
         }
     }
 
-    // Логику поиска удобно держать в сервисе, там уже есть похожий приватный метод.
+    private Film getExistingFilm(Long id) {
+        return getById(id);
+    }
+
     public Film getById(Long id) {
         return filmStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Фильм с id=" + id + " не найден"));
@@ -136,7 +132,6 @@ public class FilmService {
         }
         if (film.getDescription() == null) {
             log.warn("Пустое описание фильма");
-            return;
         }
         // максимальная длина описания — 200 символов;
         if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {

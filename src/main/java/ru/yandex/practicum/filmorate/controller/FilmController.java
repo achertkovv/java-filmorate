@@ -41,8 +41,6 @@ public class FilmController {
         return filmService.update(film);
     }
 
-    // Надо исправить: Аналогично нет GET /films/{id}, который требует задание.
-    // Нужен эндпоинт получения фильма по id с ответом 404, если фильма нет.
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable Long id) {
         return filmService.getById(id);
