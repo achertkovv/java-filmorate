@@ -16,21 +16,21 @@ import java.util.Map;
 @RestControllerAdvice
 public class ErrorHandler {
     @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Некорректные данные в теле запроса")
     public Map<String, String> handleValidation(ValidationException e) {
         log.warn("Ошибка валидации: {}", e.getMessage());
         return Map.of("error", e.getMessage());
     }
 
     @ExceptionHandler(ConditionsNotMetException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidation(ConditionsNotMetException e) {
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Не соблюдены условия в теле запроса")
+    public Map<String, String> handleCondition(ConditionsNotMetException e) {
         log.warn("Ошибка условий: {}", e.getMessage());
         return Map.of("error", e.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Ресурсы не найдены")
     public Map<String, String> handleNotFound(NotFoundException e) {
         log.warn("Не найдено: {}", e.getMessage());
         return Map.of("error", e.getMessage());

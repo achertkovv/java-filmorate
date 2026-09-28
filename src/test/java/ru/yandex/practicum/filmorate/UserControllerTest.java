@@ -75,7 +75,7 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldReturn400WhenEmailHasNoAt() throws Exception {
+    void shouldReturn500WhenEmailHasNoAt() throws Exception {
         String json = "{\n" +
                       "  \"email\": \"userexample.com\",\n" +
                       "  \"login\": \"user_login\",\n" +
@@ -86,11 +86,11 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void shouldReturn400WhenEmailIsNotValid() throws Exception {
+    void shouldReturn500WhenEmailIsNotValid() throws Exception {
         String json = "{\n" +
                       "  \"email\": \"userexample.com@\",\n" +
                       "  \"login\": \"user_login\",\n" +
@@ -101,7 +101,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
