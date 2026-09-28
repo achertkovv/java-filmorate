@@ -26,7 +26,7 @@ class FilmControllerValidationTest {
         FilmStorage filmStorage = new InMemoryFilmStorage();
         UserStorage userStorage = new InMemoryUserStorage();
         FilmService filmService = new FilmService(filmStorage, userStorage);
-        controller = new FilmController(filmStorage, filmService);
+        controller = new FilmController(filmService);
     }
 
     /**

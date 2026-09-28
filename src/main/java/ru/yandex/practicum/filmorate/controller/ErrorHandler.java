@@ -22,31 +22,34 @@ public class ErrorHandler {
     public Map<String, String> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getFieldErrors().forEach(err -> {
-            errors.put(err.getField(), err.getDefaultMessage());
-            log.warn("Ошибка валидации поля '{}': {}", err.getField(), err.getDefaultMessage());
+            String msg = err.getDefaultMessage() != null
+                    ? err.getDefaultMessage()
+                    : "Некорректное значение";
+            errors.put(err.getField(), msg);
+            log.warn("Ошибка валидации поля '{}': {}", err.getField(), msg);
         });
         return errors;
     }
 
     @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Некорректные данные в теле запроса")
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidation(ValidationException e) {
         log.warn("Ошибка валидации: {}", e.getMessage());
-        return Map.of("error", e.getMessage());
+        return errorBody(e.getMessage(), "Ошибка валидации");
     }
 
     @ExceptionHandler(ConditionsNotMetException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Не соблюдены условия в теле запроса")
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public Map<String, String> handleCondition(ConditionsNotMetException e) {
         log.warn("Ошибка условий: {}", e.getMessage());
-        return Map.of("error", e.getMessage());
+        return errorBody(e.getMessage(), "Ошибка условия");
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Ресурсы не найдены")
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(NotFoundException e) {
         log.warn("Не найдено: {}", e.getMessage());
-        return Map.of("error", e.getMessage());
+        return errorBody(e.getMessage(), "Ресурс не найден");
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -60,6 +63,12 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleOther(Exception e) {
         log.error("Непредвиденная ошибка", e);
-        return Map.of("error", e.getMessage());
+        return errorBody(e.getMessage(), "Внутренняя ошибка сервера");
+    }
+
+    // Можно лучше: Map.of не принимает null, а у многих исключений (например, NullPointerException) сообщения нет.
+    // Тогда сам обработчик 500 упадёт с новой ошибкой. Для такого случая стоит подставлять запасной текст.
+    private Map<String, String> errorBody(String message, String alterText) {
+        return Map.of("error", message != null ? message : alterText);
     }
 }
