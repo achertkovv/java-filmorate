@@ -89,7 +89,7 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    /*@Test
+    @Test
     void shouldReturn400WhenEmailIsNotValid() throws Exception {
         String json = "{\n" +
                       "  \"email\": \"userexample.com@\",\n" +
@@ -102,7 +102,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest());
-    }*/
+    }
 
     @Test
     void shouldReturn400WhenLoginContainsSpace() throws Exception {

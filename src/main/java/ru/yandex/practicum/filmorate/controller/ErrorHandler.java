@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -10,11 +11,23 @@ import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getFieldErrors().forEach(err -> {
+            errors.put(err.getField(), err.getDefaultMessage());
+            log.warn("Ошибка валидации поля '{}': {}", err.getField(), err.getDefaultMessage());
+        });
+        return errors;
+    }
+
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Некорректные данные в теле запроса")
     public Map<String, String> handleValidation(ValidationException e) {
