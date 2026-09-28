@@ -7,6 +7,11 @@ import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 
@@ -18,7 +23,10 @@ class FilmControllerValidationTest {
 
     @BeforeEach
     void setup() {
-        controller = new FilmController();
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        FilmService filmService = new FilmService(filmStorage, userStorage);
+        controller = new FilmController(filmStorage, filmService);
     }
 
     /**
@@ -38,7 +46,7 @@ class FilmControllerValidationTest {
     @Test
     void shouldAddValidFilm() {
         Film result = controller.addFilm(validFilm());
-        assertNotNull(result.getId(), "id должен быть присвоен");
+        assertNotNull(result.getId(), "ID должен быть присвоен");
         assertEquals("Матрица", result.getName());
     }
 
