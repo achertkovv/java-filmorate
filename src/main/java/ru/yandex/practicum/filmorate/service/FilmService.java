@@ -130,18 +130,17 @@ public class FilmService {
             log.warn("Некорректная продолжительность фильма '{}': {}", film.getName(), film.getDuration());
             throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }
-        if (film.getDescription() == null) {
-            log.warn("Пустое описание фильма");
-        }
-        // максимальная длина описания — 200 символов;
-        if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
-            log.warn("Некорректная длина описания фильма '{}': {}", film.getName(), film.getDescription().length());
-            throw new ValidationException("Длина описания должна содержать менее 200 символов");
-        }
         // название не может быть пустым;
         if (film.getName() == null || film.getName().isBlank()) {
             log.warn("Название фильма не задано");
             throw new ConditionsNotMetException("Название не может быть пустым");
+        }
+        if (film.getDescription() == null) {
+            log.warn("Пустое описание фильма");
+        } else if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
+            // максимальная длина описания — 200 символов;
+            log.warn("Некорректная длина описания фильма '{}': {}", film.getName(), film.getDescription().length());
+            throw new ValidationException("Длина описания должна содержать менее 200 символов");
         }
     }
 }
