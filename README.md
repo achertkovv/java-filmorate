@@ -1,13 +1,13 @@
 # java-filmorate
 ```mermaid
 erDiagram
-user ||--o{ friends : following_user_id
-    user ||--o{ friends : followed_user_id
-    user ||--o{ likes : user_id
-    film ||--o{ likes : film_id
-    film ||--|{ genres : film_id
-    genre ||--|{ genres : genre_id
-    rating ||--|| film : rating_id
+    users ||--o{ user_friends : following_user_id
+    users ||--o{ user_friends : followed_user_id
+    users ||--o{ user_films : user_id
+    films ||--o{ user_films : film_id
+    films ||--|{ film_genres : film_id
+    genres ||--|{ film_genres : genre_id
+    rating ||--|| films : rating_id
 
     films {
         integer id PK
