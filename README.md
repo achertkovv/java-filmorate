@@ -1,5 +1,6 @@
 # java-filmorate
 ```mermaid
+erDiagram
 user ||--o{ friends : following_user_id
     user ||--o{ friends : followed_user_id
     user ||--o{ likes : user_id
