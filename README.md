@@ -9,15 +9,15 @@ user ||--o{ friends : following_user_id
     genre ||--|{ genres : genre_id
     rating ||--|| film : rating_id
 
-    film {
+    films {
         integer id PK
         integer rating_id FK
         varchar name
         varchar description
-        date releaseDate
+        date release_date
         integer duration
     }
-    user {
+    users {
         integer id PK
         varchar email
         varchar login
@@ -28,20 +28,20 @@ user ||--o{ friends : following_user_id
         integer id PK
         varchar name
     }
-    friends {
+    user_friends {
         integer following_user_id FK
         integer followed_user_id FK
         bool confirmed_friendship
     }
-    likes {
+    user_films {
         integer user_id FK
         integer film_id FK
     }
-    genres {
+    film_genres {
         integer film_id FK
         integer genre_id FK
     }
-    genre {
+    genres {
         integer id PK
         varchar name
     }
