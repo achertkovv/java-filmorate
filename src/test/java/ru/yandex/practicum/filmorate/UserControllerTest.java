@@ -8,9 +8,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.dal.FilmDbStorage;
+import ru.yandex.practicum.filmorate.dal.UserDbStorage;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -24,9 +24,9 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private FilmStorage filmStorage;
+    private FilmDbStorage filmStorage;
     @MockitoBean
-    private UserStorage userStorage;
+    private UserDbStorage userStorage;
 
     @Test
     void shouldCreateUserWhenDataIsValid() throws Exception {
