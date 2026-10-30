@@ -83,7 +83,6 @@ public class UserService {
     public void removeFriend(Long userId, Long friendId) {
         getById(userId);
         getById(friendId);
-        
         userStorage.removeFriend(userId, friendId);
         log.info("Пользователи {} и {} больше не друзья", userId, friendId);
     }
