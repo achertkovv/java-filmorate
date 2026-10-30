@@ -78,6 +78,7 @@ public class FilmService {
 
     // Пользователь ставит лайк фильму
     public void addLike(Long filmId, Long userId) {
+        getById(filmId);
         ensureUserExists(userId);
         filmStorage.addLike(filmId, userId);
         log.info("Пользователь {} поставил лайк фильму {}", userId, filmId);
@@ -85,6 +86,7 @@ public class FilmService {
 
     // Удаление лайка. Если пользователь не ставил — ничего не меняется.
     public void removeLike(Long filmId, Long userId) {
+        getById(filmId);
         ensureUserExists(userId);
         filmStorage.removeLike(filmId, userId);
         log.info("Пользователь {} убрал лайк с фильма {}", userId, filmId);

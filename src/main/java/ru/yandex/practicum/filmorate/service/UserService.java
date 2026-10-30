@@ -89,11 +89,14 @@ public class UserService {
 
     // Список друзей пользователя.
     public List<User> getFriends(Long userId) {
+        getById(userId);
         return userStorage.getFriends(userId);
     }
 
     // Общие друзья двух пользователей
     public List<User> getCommonFriends(Long userId, Long otherId) {
+        getById(userId);
+        getById(otherId);
         return userStorage.getCommonFriends(userId, otherId);
     }
 
