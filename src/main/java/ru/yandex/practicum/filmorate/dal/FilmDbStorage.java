@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dal.mappers.FilmResultSetExtractor;
 import ru.yandex.practicum.filmorate.dal.mappers.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -71,17 +72,29 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Optional<Film> findById(Long id) {
-        String sql = "SELECT * FROM films WHERE id = ?";
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, filmRowMapper, id));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rating_id, " +
+                "m.name AS mpa_name, g.id AS genre_id, g.name AS genre_name " +
+                "FROM films f " +
+                "LEFT JOIN rating m ON f.rating_id = m.id " +
+                "LEFT JOIN film_genres fg ON f.id = fg.film_id " +
+                "LEFT JOIN genres g ON fg.genre_id = g.id WHERE f.id = ?";
+        List<Film> result = jdbcTemplate.query(
+                sql,
+                new FilmResultSetExtractor(),
+                id);
+        return result == null ? Optional.empty() : result.stream().findFirst();
     }
 
     @Override
     public List<Film> findAll() {
-        return jdbcTemplate.query("SELECT * FROM films", filmRowMapper);
+        return jdbcTemplate.query(
+                "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rating_id, " +
+                        "m.name AS mpa_name, g.id AS genre_id, g.name AS genre_name " +
+                        "FROM films f " +
+                        "LEFT JOIN rating m ON f.rating_id = m.id " +
+                        "LEFT JOIN film_genres fg ON f.id = fg.film_id " +
+                        "LEFT JOIN genres g ON fg.genre_id = g.id ORDER BY f.id",
+                new FilmResultSetExtractor());
     }
 
     private void saveGenres(Film film) {
@@ -113,11 +126,22 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getPopular(int count) {
-        String sql = "SELECT f.*, COUNT(uf.user_id) AS likes " +
-                "FROM films f LEFT JOIN user_films uf ON f.id = uf.film_id " +
-                "GROUP BY f.id " +
-                "ORDER BY likes DESC " +
-                "LIMIT ?";
-        return jdbcTemplate.query(sql, filmRowMapper, count);
+        String sql =
+                "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rating_id, " +
+                        "m.name AS mpa_name, g.id AS genre_id, g.name AS genre_name " +
+                        "FROM ( " +
+                        "SELECT f.id, COUNT(uf.user_id) AS likes_count " +
+                        "FROM films f " +
+                        "LEFT JOIN user_films uf ON f.id = uf.film_id " +
+                        "GROUP BY f.id " +
+                        "ORDER BY likes_count DESC, f.id " +
+                        "LIMIT ? " +
+                        ") popular " +
+                        "JOIN films f ON f.id = popular.id " +
+                        "LEFT JOIN rating m ON f.rating_id = m.id " +
+                        "LEFT JOIN film_genres fg ON f.id = fg.film_id " +
+                        "LEFT JOIN genres g ON fg.genre_id = g.id " +
+                        "ORDER BY popular.likes_count DESC, f.id";
+        return jdbcTemplate.query(sql, new FilmResultSetExtractor(), count);
     }
 }

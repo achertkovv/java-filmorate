@@ -54,9 +54,6 @@ public class FilmService {
     }
 
     public Film update(Film film) {
-        validateFilm(film);
-        setupMpa(film);
-        setupGenres(film);
         // Если при изменении данных пользователя не указан его идентификатор, то должно генерироваться
         // исключение ConditionsNotMetException с текстом: "Id должен быть указан".
         if (film.getId() == null) {
@@ -66,6 +63,9 @@ public class FilmService {
         if (filmStorage.findById(film.getId()).isEmpty()) {
             throw new NotFoundException("Фильм с id = " + film.getId() + " не найден");
         }
+        validateFilm(film);
+        setupMpa(film);
+        setupGenres(film);
         log.info("Запрос на обновление фильма: id={}", film.getId());
         return filmStorage.update(film);
     }
