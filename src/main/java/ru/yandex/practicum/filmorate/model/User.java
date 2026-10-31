@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
 import jakarta.validation.constraints.Email;
+import lombok.Data;
+
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User.
@@ -19,6 +20,7 @@ public class User {
     private String name; // имя для отображения
     private LocalDate birthday; // дата рождения
 
-    /** свойство friends в классе пользователя, которое будет содержать список его друзей */
-    private final Set<Long> friends = new HashSet<>();
+    // свойство friends в классе пользователя, которое будет содержать список его друзей
+    // id друга → статус дружбы.
+    private final Map<Long, FriendshipStatus> friends = new HashMap<>();
 }
