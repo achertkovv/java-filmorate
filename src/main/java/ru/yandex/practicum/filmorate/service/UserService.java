@@ -2,17 +2,18 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -20,7 +21,7 @@ public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -55,52 +56,48 @@ public class UserService {
 
     // Добавление в друзья
     public void addFriend(Long userId, Long friendId) {
-        User user = getExistingUser(userId);
-        User friend = getExistingUser(friendId);
+        if (userId.equals(friendId)) {
+            throw new ValidationException("Нельзя добавить самого себя в друзья");
+        }
+        getById(userId);
+        getById(friendId);
 
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
+        Optional<FriendshipStatus> existing = userStorage.getFriendshipStatus(userId, friendId);
+        if (existing.isPresent()) {
+            return;
+        }
 
-        log.info("Пользователи {} и {} теперь друзья", userId, friendId);
+        Optional<FriendshipStatus> reverse = userStorage.getFriendshipStatus(friendId, userId);
+        if (reverse.isPresent() && reverse.get() == FriendshipStatus.UNCONFIRMED) {
+            userStorage.addFriend(userId, friendId, FriendshipStatus.CONFIRMED);
+            userStorage.addFriend(friendId, userId, FriendshipStatus.CONFIRMED);
+            log.info("{} и {} теперь взаимно подтверждённые друзья", userId, friendId);
+        } else {
+            // обычная односторонняя заявка
+            userStorage.addFriend(userId, friendId, FriendshipStatus.UNCONFIRMED);
+            log.info("{} отправил заявку в друзья {}", userId, friendId);
+        }
     }
 
     // Удаление из друзей
     public void removeFriend(Long userId, Long friendId) {
-        User user = getExistingUser(userId);
-        User friend = getExistingUser(friendId);
-
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
-
+        getById(userId);
+        getById(friendId);
+        userStorage.removeFriend(userId, friendId);
         log.info("Пользователи {} и {} больше не друзья", userId, friendId);
     }
 
     // Список друзей пользователя.
     public List<User> getFriends(Long userId) {
-        User user = getExistingUser(userId);
-        return user.getFriends().stream()
-                .map(id -> userStorage.findById(id)
-                        .orElseThrow(() -> new NotFoundException("Друг с id=" + id + " не найден")))
-                .collect(Collectors.toList());
+        getById(userId);
+        return userStorage.getFriends(userId);
     }
 
     // Общие друзья двух пользователей
     public List<User> getCommonFriends(Long userId, Long otherId) {
-        User user = getExistingUser(userId);
-        User other = getExistingUser(otherId);
-
-        Set<Long> commonIds = user.getFriends().stream()
-                .filter(other.getFriends()::contains)
-                .collect(Collectors.toSet());
-
-        return commonIds.stream()
-                .map(id -> userStorage.findById(id)
-                        .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден")))
-                .collect(Collectors.toList());
-    }
-
-    private User getExistingUser(Long id) {
-        return getById(id);
+        getById(userId);
+        getById(otherId);
+        return userStorage.getCommonFriends(userId, otherId);
     }
 
     public User getById(Long id) {

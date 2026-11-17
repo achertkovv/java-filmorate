@@ -18,6 +18,18 @@ public class Film {
     private LocalDate releaseDate; // дата релиза
     private Long duration; // продолжительность фильма
 
-    /** id пользователей, поставивших лайк - один пользователь — один лайк */
+    /**
+     * Несколько жанров. HashSet — чтобы один жанр не дублировался.
+     */
+    private Set<Genre> genres = new HashSet<>();
+
+    /**
+     * Рейтинг MPA — один на фильм.
+     */
+    private Mpa mpa;
+
+    /**
+     * id пользователей, поставивших лайк - один пользователь — один лайк
+     */
     private final Set<Long> likes = new HashSet<>();
 }

@@ -8,9 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.dal.FilmDbStorage;
+import ru.yandex.practicum.filmorate.dal.GenreDbStorage;
+import ru.yandex.practicum.filmorate.dal.MpaDbStorage;
+import ru.yandex.practicum.filmorate.dal.UserDbStorage;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -26,9 +28,13 @@ class FilmControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private FilmStorage filmStorage;
+    private FilmDbStorage filmStorage;
     @MockitoBean
-    private UserStorage userStorage;
+    private UserDbStorage userStorage;
+    @MockitoBean
+    private GenreDbStorage genreDbStorage;
+    @MockitoBean
+    private MpaDbStorage mpaDbStorage;
 
     @Test
     void shouldCreateFilmWhenDataIsValid() throws Exception {
